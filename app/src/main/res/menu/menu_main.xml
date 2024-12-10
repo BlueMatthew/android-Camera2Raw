@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.xypower.mpmaster.MainActivity">
+
+    <item
+        android:id="@+id/action_picture"
+        android:orderInCategory="100"
+        android:title="Capture"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_focus"
+        android:orderInCategory="100"
+        android:title="Focus"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_comp0"
+        android:orderInCategory="100"
+        android:title="Reset"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp1"
+        android:orderInCategory="100"
+        android:title="X1"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp2"
+        android:orderInCategory="100"
+        android:title="X2"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp3"
+        android:orderInCategory="100"
+        android:title="X3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp4"
+        android:orderInCategory="100"
+        android:title="X4"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp_1"
+        android:orderInCategory="100"
+        android:title="-X1"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp_2"
+        android:orderInCategory="100"
+        android:title="-X2"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp_3"
+        android:orderInCategory="100"
+        android:title="-X3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_comp_4"
+        android:orderInCategory="100"
+        android:title="-X4"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_info"
+        android:orderInCategory="100"
+        android:title="Info"
+        app:showAsAction="never" />
+
+
+</menu>

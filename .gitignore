@@ -1,9 +1,9 @@
 # ---> Android
 # Gradle files
 .gradle/
+.google/
 build/
 app/release/
-app/src/main/cpp/libs_export/
 
 # Local configuration file (sdk path, etc)
 local.properties
