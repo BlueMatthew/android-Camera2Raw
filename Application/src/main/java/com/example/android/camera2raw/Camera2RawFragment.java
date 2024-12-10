@@ -48,6 +48,7 @@ import android.media.ImageReader;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -55,9 +56,13 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.RequiresApi;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Range;
+import android.util.Rational;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -1043,8 +1048,16 @@ public class Camera2RawFragment extends Fragment
                 return;
             }
 
-            StreamConfigurationMap map = mCharacteristics.get(
-                    CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            StreamConfigurationMap map = null;
+
+            if (map == null) {
+                try {
+                    map = mCharacteristics.get(
+                            CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
 
             // For still image captures, we always use the largest available size.
             Size largestJpeg = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
@@ -1225,6 +1238,41 @@ public class Camera2RawFragment extends Fragment
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION,
                     sensorToDeviceRotation(mCharacteristics, rotation));
 
+            Range<Integer> range = mCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+            Rational rational = mCharacteristics.get(CameraCharacteristics
+                    .CONTROL_AE_COMPENSATION_STEP);
+            double step = rational.doubleValue();
+
+            // mCharacteristics.get(CameraMetadata.CONTROL_AE_COMPENSATION_STEP)
+            List<CaptureRequest> requests = new ArrayList<>();
+            for (int idx = 0; idx < 6; idx++) {
+                // Set request tag to easily track results in callbacks.
+                captureBuilder.setTag(mRequestCounter.getAndIncrement());
+
+                if (idx == 4) {
+                    // captureBuilder.set(Cap);
+                    captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, new Integer(-4));
+                } else if (idx == 5) {
+                    captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, new Integer(4));
+                }
+
+                CaptureRequest request = captureBuilder.build();
+
+                // Create an ImageSaverBuilder in which to collect results, and add it to the queue
+                // of active requests.
+                ImageSaver.ImageSaverBuilder jpegBuilder = new ImageSaver.ImageSaverBuilder(activity)
+                        .setCharacteristics(mCharacteristics);
+                ImageSaver.ImageSaverBuilder rawBuilder = new ImageSaver.ImageSaverBuilder(activity)
+                        .setCharacteristics(mCharacteristics);
+
+                mJpegResultQueue.put((int) request.getTag(), jpegBuilder);
+                mRawResultQueue.put((int) request.getTag(), rawBuilder);
+
+                requests.add(request);
+            }
+
+            mCaptureSession.captureBurst(requests, mCaptureCallback, mBackgroundHandler);
+            /*
             // Set request tag to easily track results in callbacks.
             captureBuilder.setTag(mRequestCounter.getAndIncrement());
 
@@ -1241,6 +1289,7 @@ public class Camera2RawFragment extends Fragment
             mRawResultQueue.put((int) request.getTag(), rawBuilder);
 
             mCaptureSession.capture(request, mCaptureCallback, mBackgroundHandler);
+            */
 
         } catch (CameraAccessException e) {
             e.printStackTrace();
